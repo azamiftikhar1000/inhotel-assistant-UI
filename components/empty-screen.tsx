@@ -4,24 +4,30 @@ import { ArrowRight } from 'lucide-react'
 const exampleMessages = [
 
   {
-    heading: 'Optimize Your Rental Revenue',
-    message: 'Optimize Your Rental Revenue'
+    heading: 'Are we on track with our guest satisfaction and RevPAR goals?',
+    message: 'Are we on track with our guest satisfaction and RevPAR goals?',
   },
   {
-    heading: 'Unleash Your Rental’s Potential',
-    message: 'Unleash Your Rental’s Potential'
+    heading: 'Develop a tailored strategy to drive direct bookings.',
+    message: 'Develop a tailored strategy to drive direct bookings.'
   },
   {
-    heading: 'Revolutionize F&B Operations with AI Assistants',
-    message: 'Revolutionize F&B Operations with AI Assistants'
+    heading: 'Are our restaurant menus optimally structured for our guests?',
+    message: 'Are our restaurant menus optimally structured for our guests?',
   },
   {
-    heading: 'Unveil AI’s Logic and Evolve Together',
-    message: 'Unveil AI’s Logic and Evolve Together'
+    heading: 'Which revenue management system would be best suited for our operation?',
+    message: 'Which revenue management system would be best suited for our operation?'
+
+  },
+   { 
+    heading:'Organize introductory meetings with the top 3 consultants for marketing.',
+  message:'Organize introductory meetings with the top 3 consultants for marketing.'
+
   },
   {
-    heading: 'Optimize Menu Offerings with AI Insights',
-    message: 'Optimize Menu Offerings with AI Insights.'
+    heading: 'Emergency, we need to evacuate!',
+    message: 'Emergency, we need to evacuate!'
   },
 ]
 export function EmptyScreen({
