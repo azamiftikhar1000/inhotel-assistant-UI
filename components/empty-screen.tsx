@@ -5,15 +5,15 @@ const exampleMessages = [
 
   {
     heading: 'Optimize Your Rental Revenue',
-    message: 'Supercharge your rental revenue with industry leading Dynamic Pricing software.'
+    message: 'Optimize Your Rental Revenue'
   },
   {
     heading: 'Unleash Your Rental’s Potential',
-    message: 'Unleash your rental’s potential with revenue management'
+    message: 'Unleash Your Rental’s Potential'
   },
   {
     heading: 'Revolutionize F&B Operations with AI Assistants',
-    message: 'Apply AI to augment human roles in F&B operations.'
+    message: 'Revolutionize F&B Operations with AI Assistants'
   },
   {
     heading: 'Unveil AI’s Logic and Evolve Together',
