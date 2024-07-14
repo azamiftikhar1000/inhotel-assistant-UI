@@ -2,6 +2,7 @@ import { createStreamableUI } from 'ai/rsc'
 import { retrieveTool } from './retrieve'
 import { searchTool } from './search'
 import { videoSearchTool } from './video-search'
+import { hotelAssistant } from './hotel-assistant'
 
 export interface ToolProps {
   uiStream: ReturnType<typeof createStreamableUI>
@@ -15,6 +16,10 @@ export const getTools = ({ uiStream, fullResponse }: ToolProps) => {
       fullResponse
     }),
     retrieve: retrieveTool({
+      uiStream,
+      fullResponse
+    }),
+    hotelAssistant: hotelAssistant({
       uiStream,
       fullResponse
     })

@@ -14,7 +14,7 @@ export default function Page({
     redirect('/')
   }
   const id = generateId()
-
+  console.log('searchParams.q', searchParams.q)
   return (
     <AI initialAIState={{ chatId: id, messages: [] }}>
       <Chat id={id} query={searchParams.q} />
