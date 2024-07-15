@@ -1,15 +1,16 @@
-import { createStreamableUI } from 'ai/rsc'
-import { retrieveTool } from './retrieve'
-import { searchTool } from './search'
-import { videoSearchTool } from './video-search'
-import { hotelAssistant } from './hotel-assistant'
+import { createStreamableUI } from 'ai/rsc';
+import { retrieveTool } from './retrieve';
+import { searchTool } from './search';
+import { videoSearchTool } from './video-search';
+import { hotelAssistant } from './hotel-assistant';
 
 export interface ToolProps {
-  uiStream: ReturnType<typeof createStreamableUI>
-  fullResponse: string
+  uiStream: ReturnType<typeof createStreamableUI>;
+  fullResponse: string;
+  inbox_id?: string; // Optional inbox_id
 }
 
-export const getTools = ({ uiStream, fullResponse }: ToolProps) => {
+export const getTools = ({ uiStream, fullResponse, inbox_id = '' }: ToolProps) => { // Default inbox_id to empty string
   const tools: any = {
     search: searchTool({
       uiStream,
@@ -21,7 +22,8 @@ export const getTools = ({ uiStream, fullResponse }: ToolProps) => {
     }),
     hotelAssistant: hotelAssistant({
       uiStream,
-      fullResponse
+      fullResponse,
+      inbox_id // Include inbox_id in the tool properties
     })
   }
 

@@ -153,7 +153,7 @@ async function submit(
     ) {
       // Search the web and generate the answer
       const { fullResponse, hasError, toolResponses, finishReason } =
-        await researcher(uiStream, streamText, messages)
+        await researcher(uiStream, streamText, messages, aiState.get().inbox_id) // Pass inbox_id to researcher
       stopReason = finishReason || ''
       answer = fullResponse
       toolOutputs = toolResponses
@@ -274,8 +274,10 @@ async function submit(
 export type AIState = {
   messages: AIMessage[]
   chatId: string
+  inbox_id?: string // Add inbox_id to AIState
   isSharePage?: boolean
 }
+
 
 export type UIState = {
   id: string
@@ -286,6 +288,7 @@ export type UIState = {
 
 const initialAIState: AIState = {
   chatId: generateId(),
+  inbox_id: '', // Initialize inbox_id
   messages: []
 }
 
