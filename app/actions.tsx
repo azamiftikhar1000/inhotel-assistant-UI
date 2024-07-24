@@ -102,16 +102,17 @@ async function submit(
   }
 
   async function processEvents() {
+    console.log(aiState.get().promptData)
     // Show the spinner
     uiStream.append(<Spinner />)
 
     let action = { object: { next: 'proceed' } }
     // If the user skips the task, we proceed to the search
-    if (!skip) action = (await taskManager(messages)) ?? action
+    if (!skip) action = (await taskManager(messages,aiState.get().promptData?.taskManager)) ?? action
 
     if (action.object.next === 'inquire') {
       // Generate inquiry
-      const inquiry = await inquire(uiStream, messages)
+      const inquiry = await inquire(uiStream, messages,aiState.get().promptData?.inquire)
       uiStream.done()
       isGenerating.done()
       isCollapsed.done(false)
@@ -151,9 +152,10 @@ async function submit(
         ? toolOutputs.length === 0 && answer.length === 0 && !errorOccurred
         : stopReason !== 'stop' && !errorOccurred
     ) {
+
       // Search the web and generate the answer
       const { fullResponse, hasError, toolResponses, finishReason } =
-        await researcher(uiStream, streamText, messages, aiState.get().inbox_id) // Pass inbox_id to researcher
+        await researcher(uiStream, streamText, messages, aiState.get().inbox_id,aiState.get().promptData?.researcher) // Pass inbox_id to researcher
       stopReason = finishReason || ''
       answer = fullResponse
       toolOutputs = toolResponses
@@ -183,7 +185,7 @@ async function submit(
       // modify the messages to be used by the specific model
       const modifiedMessages = transformToolMessages(messages)
       const latestMessages = modifiedMessages.slice(maxMessages * -1)
-      const { response, hasError } = await writer(uiStream, latestMessages)
+      const { response, hasError } = await writer(uiStream, latestMessages,aiState.get().promptData?.writer)
       answer = response
       errorOccurred = hasError
       messages.push({
@@ -221,7 +223,7 @@ async function submit(
       })
 
       // Generate related queries
-      const relatedQueries = await querySuggestor(uiStream, processedMessages)
+      const relatedQueries = await querySuggestor(uiStream, processedMessages,aiState.get().promptData?.querySuggestor)
       // Add follow-up panel
       uiStream.append(
         <Section title="Follow-up">
@@ -276,6 +278,7 @@ export type AIState = {
   chatId: string
   inbox_id?: string // Add inbox_id to AIState
   isSharePage?: boolean
+  promptData?: any
 }
 
 
@@ -289,7 +292,8 @@ export type UIState = {
 const initialAIState: AIState = {
   chatId: generateId(),
   inbox_id: '', // Initialize inbox_id
-  messages: []
+  messages: [],
+  promptData:{}
 }
 
 const initialUIState: UIState = []
