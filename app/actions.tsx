@@ -108,11 +108,14 @@ async function submit(
 
     let action = { object: { next: 'proceed' } }
     // If the user skips the task, we proceKeys and Values of promptData:ed to the search
+    console.log("messages :",messages)
     if (!skip) action = (await taskManager(messages,aiState.get().promptData?.taskManager)) ?? action
-
+    console.log("taskManager result",action)
     if (action.object.next === 'inquire') {
       // Generate inquiry
       const inquiry = await inquire(uiStream, messages,aiState.get().promptData?.inquire)
+      console.log("inquiry result",inquiry)
+      
       uiStream.done()
       isGenerating.done()
       isCollapsed.done(false)
@@ -156,6 +159,7 @@ async function submit(
       // Search the web and generate the answer
       const { fullResponse, hasError, toolResponses, finishReason } =
         await researcher(uiStream, streamText, messages, aiState.get().inbox_id,aiState.get().promptData?.researcher) // Pass inbox_id to researcher
+      console.log("researcher result : fullResponse, hasError, toolResponses, finishReason",fullResponse, hasError, toolResponses, finishReason)
       stopReason = finishReason || ''
       answer = fullResponse
       toolOutputs = toolResponses
@@ -187,6 +191,7 @@ async function submit(
       const latestMessages = modifiedMessages.slice(maxMessages * -1)
       const { response, hasError } = await writer(uiStream, latestMessages,aiState.get().promptData?.writer)
       answer = response
+      console.log("writer result :", answer)
       errorOccurred = hasError
       messages.push({
         role: 'assistant',
@@ -224,6 +229,7 @@ async function submit(
 
       // Generate related queries
       const relatedQueries = await querySuggestor(uiStream, processedMessages,aiState.get().promptData?.querySuggestor)
+      console.log("querySuggestor result :", relatedQueries)
       // Add follow-up panel
       uiStream.append(
         <Section title="Follow-up">
