@@ -9,6 +9,7 @@ export async function querySuggestor(
   messages: CoreMessage[],
   systemPrompt?: string
 ) {
+  console.log("querySuggestor",systemPrompt)
   const objectStream = createStreamableValue<PartialRelated>()
   uiStream.append(<SearchRelated relatedQueries={objectStream.value} />)
 
