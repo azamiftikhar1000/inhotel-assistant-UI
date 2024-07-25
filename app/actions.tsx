@@ -102,12 +102,12 @@ async function submit(
   }
 
   async function processEvents() {
-    console.log(aiState.get().promptData)
+    console.log("promptData",aiState.get().promptData)
     // Show the spinner
     uiStream.append(<Spinner />)
 
     let action = { object: { next: 'proceed' } }
-    // If the user skips the task, we proceed to the search
+    // If the user skips the task, we proceKeys and Values of promptData:ed to the search
     if (!skip) action = (await taskManager(messages,aiState.get().promptData?.taskManager)) ?? action
 
     if (action.object.next === 'inquire') {
