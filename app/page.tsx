@@ -9,7 +9,8 @@ export default async function Page({ searchParams }: { searchParams: { id: strin
   const inbox_id = searchParams.id;
   const response = await fetch(`https://inhotel-bda7de42c465.herokuapp.com/assistant/get_ui_prompts?inbox_id=${inbox_id}`);
   let promptData = await response.json();
-
+  console.log('inbox_id', searchParams.id);
+  console.log('promptData', promptData);
   const promptDataParsed =JSON.parse( promptData);
 
   return (
