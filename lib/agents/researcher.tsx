@@ -9,7 +9,8 @@ export async function researcher(
   streamableText: ReturnType<typeof createStreamableValue<string>>,
   messages: CoreMessage[],
   inbox_id?: string, // Add inbox_id parameter
-  systemPrompt?: string
+  systemPrompt?: string,
+  hotelAssistantPrompt?: any
 ) {
   let fullResponse = '';
   let hasError = false;
@@ -38,7 +39,9 @@ export async function researcher(
     tools: getTools({
       uiStream,
       fullResponse,
-      inbox_id // Pass inbox_id to getTools
+      inbox_id,
+      hotelAssistantPrompt
+      
     }),
     onFinish: async event => {
       finishReason = event.finishReason;

@@ -158,7 +158,7 @@ async function submit(
 
       // Search the web and generate the answer
       const { fullResponse, hasError, toolResponses, finishReason } =
-        await researcher(uiStream, streamText, messages, aiState.get().inbox_id,aiState.get().promptData?.researcher) // Pass inbox_id to researcher
+        await researcher(uiStream, streamText, messages, aiState.get().inbox_id,aiState.get().promptData?.researcher, aiState.get().promptData?.tools?.hotelAssistant) // Pass inbox_id to researcher
       console.log("researcher result : fullResponse, hasError, toolResponses, finishReason",fullResponse, hasError, toolResponses, finishReason)
       stopReason = finishReason || ''
       answer = fullResponse

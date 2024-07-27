@@ -1,12 +1,17 @@
 import { tool } from 'ai';
+import { z } from 'zod';
 import { createStreamableValue } from 'ai/rsc';
 import { hotelAssistantSchema } from '@/lib/schema/hotel-assistant';
 import { ToolProps } from '.';
 
 // Start Generation Here
-export const hotelAssistant = ({ uiStream, fullResponse, inbox_id = '' }: ToolProps) => tool({
-  description: 'Hotel Assistant which have all the information of hotel get anything you want to know about hotel',
-  parameters: hotelAssistantSchema,
+export const hotelAssistant = ({ uiStream, fullResponse, inbox_id = '', hotelAssistantPrompt={}  }: ToolProps) => tool({
+
+  description: hotelAssistantPrompt.description ,
+  parameters: z.object({
+    query: z.string().describe( hotelAssistantPrompt.parameters)
+  })
+  ,
   execute: async ({ query }) => {
     let hasError = false;
     const streamResults = createStreamableValue<string>();

@@ -8,9 +8,10 @@ export interface ToolProps {
   uiStream: ReturnType<typeof createStreamableUI>;
   fullResponse: string;
   inbox_id?: string; // Optional inbox_id
+  hotelAssistantPrompt?: any; 
 }
 
-export const getTools = ({ uiStream, fullResponse, inbox_id = '' }: ToolProps) => { // Default inbox_id to empty string
+export const getTools = ({ uiStream, fullResponse, inbox_id = '',hotelAssistantPrompt='' }: ToolProps) => { // Default inbox_id to empty string
   const tools: any = {
     search: searchTool({
       uiStream,
@@ -23,7 +24,8 @@ export const getTools = ({ uiStream, fullResponse, inbox_id = '' }: ToolProps) =
     hotelAssistant: hotelAssistant({
       uiStream,
       fullResponse,
-      inbox_id // Include inbox_id in the tool properties
+      inbox_id, // Include inbox_id in the tool properties
+      hotelAssistantPrompt
     })
   }
 
