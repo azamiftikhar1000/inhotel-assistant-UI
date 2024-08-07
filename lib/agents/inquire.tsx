@@ -45,7 +45,8 @@ import { getModel } from '../utils'
 export async function inquire(
   uiStream: ReturnType<typeof createStreamableUI>,
   messages: CoreMessage[],
-  systemPrompt?: string
+  hotel_id?: string,
+  assistant_id?: string
 ) {
   const objectStream = createStreamableValue<PartialInquiry>()
   uiStream.update(<Copilot inquiry={objectStream.value} />)

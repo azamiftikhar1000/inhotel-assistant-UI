@@ -5,7 +5,8 @@ import { AnswerSection } from '@/components/answer-section'
 export async function writer(
   uiStream: ReturnType<typeof createStreamableUI>,
   messages: CoreMessage[],
-  systemPrompt?: string
+  hotel_id?: string,
+  assistant_id?: string
 ) {
   let fullResponse = ''
   let hasError = false
@@ -21,7 +22,7 @@ export async function writer(
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ question })
+      body: JSON.stringify({ question,"customFunction_0":{"functionInputVariables": {"milvusFilter":`hotel_id == ${hotel_id} && assistant_id in [${assistant_id},0]`}} })
     });
 
     if (response.ok) {

@@ -102,18 +102,17 @@ async function submit(
   }
 
   async function processEvents() {
-    console.log("promptData",aiState.get().promptData)
     // Show the spinner
     uiStream.append(<Spinner />)
 
     let action = { json: { next: 'proceed' } }
     // If the user skips the task, we proceKeys and Values of promptData:ed to the search
     console.log("messages :",messages)
-    if (!skip) action = (await taskManager(messages,aiState.get().promptData?.taskManager)) ?? action
+    if (!skip) action = (await taskManager(messages,aiState.get().hotel_id,aiState.get().assistant_id)) ?? action
     console.log("taskManager result",action)
     if (action.json.next === 'inquire') {
       // Generate inquiry
-      const inquiry = await inquire(uiStream, messages,aiState.get().promptData?.inquire)
+      const inquiry = await inquire(uiStream, messages,aiState.get().hotel_id,aiState.get().assistant_id)
       console.log("inquiry result",inquiry)
       
       uiStream.done()
@@ -149,7 +148,7 @@ async function submit(
     )
 
 
-    const { response, hasError } = await writer(uiStream, messages,aiState.get().promptData?.writer)
+    const { response, hasError } = await writer(uiStream, messages,aiState.get().hotel_id,aiState.get().assistant_id)
       answer = response
       console.log("writer result :", answer)
       errorOccurred = hasError
@@ -188,7 +187,7 @@ async function submit(
       })
 
       // Generate related queries
-      const relatedQueries = await querySuggestor(uiStream, processedMessages,aiState.get().promptData?.querySuggestor)
+      const relatedQueries = await querySuggestor(uiStream, processedMessages)
       console.log("querySuggestor result :", relatedQueries)
       // Add follow-up panel
       uiStream.append(
@@ -242,9 +241,9 @@ async function submit(
 export type AIState = {
   messages: AIMessage[]
   chatId: string
-  inbox_id?: string // Add inbox_id to AIState
+  assistant_id?: any; 
   isSharePage?: boolean
-  promptData?: any
+  hotel_id?: any; 
 }
 
 
@@ -257,9 +256,9 @@ export type UIState = {
 
 const initialAIState: AIState = {
   chatId: generateId(),
-  inbox_id: '', // Initialize inbox_id
+  assistant_id: '',
   messages: [],
-  promptData:{}
+ hotel_id: '',
 }
 
 const initialUIState: UIState = []
