@@ -1,8 +1,6 @@
 import { createStreamableUI, createStreamableValue } from 'ai/rsc'
-import { CoreMessage, streamText } from 'ai'
-import { createOpenAI } from '@ai-sdk/openai'
+import { CoreMessage } from 'ai'
 import { AnswerSection } from '@/components/answer-section'
-import { AnswerSectionGenerated } from '@/components/answer-section-generated'
 
 export async function writer(
   uiStream: ReturnType<typeof createStreamableUI>,
@@ -15,35 +13,35 @@ export async function writer(
   const answerSection = <AnswerSection result={streamableAnswer.value} />
   uiStream.append(answerSection)
 
-  const openai = createOpenAI({
-    baseURL: process.env.SPECIFIC_API_BASE,
-    apiKey: process.env.SPECIFIC_API_KEY,
-    organization: '' // optional organization
-  })
+  const question = messages.map(message => message.content).join(' ');
 
-  await streamText({
-    model: openai!.chat(process.env.SPECIFIC_API_MODEL || 'llama3-70b-8192'),
-    maxTokens: 2500,
-    system: `${systemPrompt}`,
-    messages,
-    onFinish: event => {
-      fullResponse = event.text
-      streamableAnswer.done(event.text)
+  try {
+    const response = await fetch('https://inhotel-workflow.replit.app/api/v1/prediction/abda5aa4-4c48-423a-afbe-a77c63bf0c43', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ question })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      fullResponse = result.text;
+      streamableAnswer.update(fullResponse);
+    } else {
+      throw new Error('Network response was not ok');
     }
-  })
-    .then(async result => {
-      for await (const text of result.textStream) {
-        if (text) {
-          fullResponse += text
-          streamableAnswer.update(fullResponse)
-        }
-      }
-    })
-    .catch(err => {
-      hasError = true
-      fullResponse = 'Error: ' + err.message
-      streamableAnswer.update(fullResponse)
-    })
+  } catch (err) {
+    hasError = true;
+    if (err instanceof Error) {
+      fullResponse = 'Error: ' + err.message;
+    } else {
+      fullResponse = 'An unknown error occurred';
+    }
+    streamableAnswer.update(fullResponse);
+  } finally {
+    streamableAnswer.done();
+  }
 
   return { response: fullResponse, hasError }
 }

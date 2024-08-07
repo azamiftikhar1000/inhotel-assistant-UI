@@ -1,15 +1,27 @@
 import { createStreamableUI, createStreamableValue } from 'ai/rsc'
-import { CoreMessage, streamObject } from 'ai'
-import { PartialRelated, relatedSchema } from '@/lib/schema/related'
+import { CoreMessage } from 'ai'
+import { PartialRelated } from '@/lib/schema/related'
 import SearchRelated from '@/components/search-related'
-import { getModel } from '../utils'
+
+// Define the type for the API response item
+interface ApiResponseItem {
+  query: string;
+}
+
+// Define the type for the entire API response
+interface ApiResponse {
+  json: ApiResponseItem[];
+  question: string;
+  chatId: string;
+  chatMessageId: string;
+  sessionId: string;
+}
 
 export async function querySuggestor(
   uiStream: ReturnType<typeof createStreamableUI>,
   messages: CoreMessage[],
   systemPrompt?: string
 ) {
-  console.log("querySuggestor",systemPrompt)
   const objectStream = createStreamableValue<PartialRelated>()
   uiStream.append(<SearchRelated relatedQueries={objectStream.value} />)
 
@@ -20,24 +32,31 @@ export async function querySuggestor(
     }
   }) as CoreMessage[]
 
+  const requestData = {
+    question: lastMessages.map(message => message.content).join(' ')
+  }
+
   let finalRelatedQueries: PartialRelated = {}
-  await streamObject({
-    model: getModel(),
-    system: `${systemPrompt}`,
-    messages: lastMessages,
-    schema: relatedSchema
-  })
-    .then(async result => {
-      for await (const obj of result.partialObjectStream) {
-        if (obj.items) {
-          objectStream.update(obj)
-          finalRelatedQueries = obj
-        }
-      }
+  try {
+    const response = await fetch('https://inhotel-workflow.replit.app/api/v1/prediction/76868c30-f054-4191-be7f-0ac6500cfbaa', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
     })
-    .finally(() => {
-      objectStream.done()
-    })
+
+    const data: ApiResponse = await response.json()
+    if (data.json) {
+      const relatedQueries = data.json.map((item: ApiResponseItem) => ({ query: item.query }))
+      objectStream.update({ items: relatedQueries })
+      finalRelatedQueries = { items: relatedQueries }
+    }
+  } catch (error) {
+    console.error('Error fetching related queries:', error)
+  } finally {
+    objectStream.done()
+  }
 
   return finalRelatedQueries
 }

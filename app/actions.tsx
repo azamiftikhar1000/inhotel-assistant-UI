@@ -106,12 +106,12 @@ async function submit(
     // Show the spinner
     uiStream.append(<Spinner />)
 
-    let action = { object: { next: 'proceed' } }
+    let action = { json: { next: 'proceed' } }
     // If the user skips the task, we proceKeys and Values of promptData:ed to the search
     console.log("messages :",messages)
     if (!skip) action = (await taskManager(messages,aiState.get().promptData?.taskManager)) ?? action
     console.log("taskManager result",action)
-    if (action.object.next === 'inquire') {
+    if (action.json.next === 'inquire') {
       // Generate inquiry
       const inquiry = await inquire(uiStream, messages,aiState.get().promptData?.inquire)
       console.log("inquiry result",inquiry)
@@ -148,48 +148,8 @@ async function submit(
       <AnswerSection result={streamText.value} hasHeader={false} />
     )
 
-    // If useSpecificAPI is enabled, only function calls will be made
-    // If not using a tool, this model generates the answer
-    while (
-      useSpecificAPI
-        ? toolOutputs.length === 0 && answer.length === 0 && !errorOccurred
-        : stopReason !== 'stop' && !errorOccurred
-    ) {
 
-      // Search the web and generate the answer
-      const { fullResponse, hasError, toolResponses, finishReason } =
-        await researcher(uiStream, streamText, messages, aiState.get().inbox_id,aiState.get().promptData?.researcher, aiState.get().promptData?.tools?.hotelAssistant) // Pass inbox_id to researcher
-      console.log("researcher result : fullResponse, hasError, toolResponses, finishReason",fullResponse, hasError, toolResponses, finishReason)
-      stopReason = finishReason || ''
-      answer = fullResponse
-      toolOutputs = toolResponses
-      errorOccurred = hasError
-
-      if (toolOutputs.length > 0) {
-        toolOutputs.map(output => {
-          aiState.update({
-            ...aiState.get(),
-            messages: [
-              ...aiState.get().messages,
-              {
-                id: groupeId,
-                role: 'tool',
-                content: JSON.stringify(output.result),
-                name: output.toolName,
-                type: 'tool'
-              }
-            ]
-          })
-        })
-      }
-    }
-
-    // If useSpecificAPI is enabled, generate the answer using the specific model
-    if (useSpecificAPI && answer.length === 0 && !errorOccurred) {
-      // modify the messages to be used by the specific model
-      const modifiedMessages = transformToolMessages(messages)
-      const latestMessages = modifiedMessages.slice(maxMessages * -1)
-      const { response, hasError } = await writer(uiStream, latestMessages,aiState.get().promptData?.writer)
+    const { response, hasError } = await writer(uiStream, messages,aiState.get().promptData?.writer)
       answer = response
       console.log("writer result :", answer)
       errorOccurred = hasError
@@ -197,7 +157,7 @@ async function submit(
         role: 'assistant',
         content: answer
       })
-    }
+    
 
     if (!errorOccurred) {
       const useGoogleProvider = process.env.GOOGLE_GENERATIVE_AI_API_KEY
