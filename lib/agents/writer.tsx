@@ -23,10 +23,14 @@ export async function writer(
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ question,
-        "overrideConfig":{"customFunction_0": 
-          {"functionInputVariables":
-             {"milvusFilter":`hotel_id == ${hotel_id} && assistant_id in [${assistant_id},0]`}}}
-     })
+        "overrideConfig": {
+          "functionInputVariables": {
+              "customFunction_0": {
+            "data":question,
+             "milvusFilter":`hotel_id == ${hotel_id} && assistant_id in [${assistant_id},0]`
+            
+            }}}}
+    )
     });
 
     if (response.ok) {
