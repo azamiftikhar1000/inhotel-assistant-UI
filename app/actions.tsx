@@ -106,32 +106,32 @@ async function submit(
     uiStream.append(<Spinner />)
 
     let action = { json: { next: 'proceed' } }
-    // If the user skips the task, we proceKeys and Values of promptData:ed to the search
-    console.log("messages :",messages)
-    if (!skip) action = (await taskManager(messages,aiState.get().hotel_id,aiState.get().assistant_id)) ?? action
-    console.log("taskManager result",action)
-    if (action.json.next === 'inquire') {
-      // Generate inquiry
-      const inquiry = await inquire(uiStream, messages,aiState.get().hotel_id,aiState.get().assistant_id)
-      console.log("inquiry result",inquiry)
+    // // If the user skips the task, we proceKeys and Values of promptData:ed to the search
+    // console.log("messages :",messages)
+    // if (!skip) action = (await taskManager(messages,aiState.get().hotel_id,aiState.get().assistant_id)) ?? action
+    // console.log("taskManager result",action)
+    // if (action.json.next === 'inquire') {
+    //   // Generate inquiry
+    //   const inquiry = await inquire(uiStream, messages,aiState.get().hotel_id,aiState.get().assistant_id)
+    //   console.log("inquiry result",inquiry)
       
-      uiStream.done()
-      isGenerating.done()
-      isCollapsed.done(false)
-      aiState.done({
-        ...aiState.get(),
-        messages: [
-          ...aiState.get().messages,
-          {
-            id: generateId(),
-            role: 'assistant',
-            content: `inquiry: ${inquiry?.question}`,
-            type: 'inquiry'
-          }
-        ]
-      })
-      return
-    }
+    //   uiStream.done()
+    //   isGenerating.done()
+    //   isCollapsed.done(false)
+    //   aiState.done({
+    //     ...aiState.get(),
+    //     messages: [
+    //       ...aiState.get().messages,
+    //       {
+    //         id: generateId(),
+    //         role: 'assistant',
+    //         content: `inquiry: ${inquiry?.question}`,
+    //         type: 'inquiry'
+    //       }
+    //     ]
+    //   })
+    //   return
+    // }
 
     // Set the collapsed state to true
     isCollapsed.done(true)

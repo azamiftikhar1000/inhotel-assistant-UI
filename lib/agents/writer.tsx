@@ -26,12 +26,13 @@ export async function writer(
         "overrideConfig": {
           "functionInputVariables": {
               "customFunction_0": {
-            "data":question,
+            "data":question.replace(/{/g, "").replace(/}/g, ""),
              "milvusFilter":`hotel_id == ${hotel_id} && assistant_id in [${assistant_id},0]`
             
             }}}}
     )
     });
+
 
     if (response.ok) {
       const result = await response.json();
